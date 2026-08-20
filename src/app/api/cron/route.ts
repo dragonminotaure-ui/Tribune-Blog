@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { collectNews, pickBest } from "@/lib/news/collector";
 import { generateArticle } from "@/lib/llm/generator";
-import { saveArticle, buildArticle, listArticles } from "@/lib/data/articles";
+import { saveArticle, buildArticle, listArticles, articleToMdx } from "@/lib/data/articles";
 import { commitArticle } from "@/lib/git/commit";
 
 export const runtime = "nodejs";
@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
     const commit = await commitArticle(
       saved.slug,
       `article(cron): ${saved.title.slice(0, 72)}`,
+      articleToMdx(saved),
     );
 
     // Revalidation des pages.

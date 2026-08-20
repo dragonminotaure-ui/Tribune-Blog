@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateArticle } from "@/lib/llm/generator";
-import { saveArticle, buildArticle } from "@/lib/data/articles";
+import { saveArticle, buildArticle, articleToMdx } from "@/lib/data/articles";
 import { commitArticle } from "@/lib/git/commit";
 import type { NewsInput } from "@/lib/types";
 
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     const commit = await commitArticle(
       saved.slug,
       `article: ${saved.title.slice(0, 72)}`,
+      articleToMdx(saved),
     );
 
     return NextResponse.json({

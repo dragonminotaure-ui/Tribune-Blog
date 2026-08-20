@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { collectNews, pickBest } from "@/lib/news/collector";
 import { generateArticle } from "@/lib/llm/generator";
-import { saveArticle, buildArticle, listArticles } from "@/lib/data/articles";
+import { saveArticle, buildArticle, listArticles, articleToMdx } from "@/lib/data/articles";
 import { commitArticle } from "@/lib/git/commit";
 
 export const runtime = "nodejs";
@@ -39,6 +39,7 @@ export async function POST() {
     const commit = await commitArticle(
       saved.slug,
       `article(auto): ${saved.title.slice(0, 72)}`,
+      articleToMdx(saved),
     );
 
     return NextResponse.json({

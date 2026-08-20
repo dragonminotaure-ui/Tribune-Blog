@@ -29,6 +29,7 @@ interface GitCommitResult {
 export async function commitArticle(
   slug: string,
   message: string,
+  content?: string,
 ): Promise<GitCommitResult> {
   const token = process.env.GIT_TOKEN;
   const repo = process.env.GIT_REPO;
@@ -76,12 +77,17 @@ export async function commitArticle(
     const commitData = await commitRes.json();
     const baseTreeSha: string = commitData.tree.sha;
 
-    // 3. Lit le contenu du fichier .mdx local.
-    const { readFile } = await import("node:fs/promises");
-    const path = await import("node:path");
-    const filePath = path.join(process.cwd(), "data", "articles", `${slug}.mdx`);
-    const content = await readFile(filePath, "utf-8");
-    const base64Content = Buffer.from(content).toString("base64");
+    // 3. Obtient le contenu : paramètre passé OU lecture du fichier local.
+    let fileContent: string;
+    if (content) {
+      fileContent = content;
+    } else {
+      const { readFile } = await import("node:fs/promises");
+      const path = await import("node:path");
+      const filePath = path.join(process.cwd(), "data", "articles", `${slug}.mdx`);
+      fileContent = await readFile(filePath, "utf-8");
+    }
+    const base64Content = Buffer.from(fileContent).toString("base64");
 
     // 4. Crée un blob.
     const blobRes = await fetch(
