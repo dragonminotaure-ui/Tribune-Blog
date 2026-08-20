@@ -1,0 +1,43 @@
+# GitHub Actions — Cron externe gratuit (5x/jour)
+# Appelle l'API /api/cron sur Vercel 5 fois par jour.
+# Le plan Hobby de Vercel limite à 1 cron intégré/jour, mais GitHub Actions
+# permet d'en avoir autant qu'on veut gratuitement (2 000 min/mois).
+#
+# Le secret CRON_SECRET doit être configuré dans :
+#   GitHub repo → Settings → Secrets and variables → Actions → New secret
+#   Name: CRON_SECRET
+#   Value: 2017fa5395d0dd0a8f99bc39e4babef969941a5dd384fb5e7140ef9ac93461fe
+
+name: Generate Article (5x/day)
+
+on:
+  schedule:
+    # UTC — 07h, 10h, 13h, 16h, 19h (soit 09h, 12h, 15h, 18h, 21h heure de Paris)
+    - cron: "0 7,10,13,16,19 * * *"
+  workflow_dispatch: # Permet aussi de déclencher manuellement
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger article generation
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X GET \
+            "https://opinion-blog.vercel.app/api/cron?secret=${{ secrets.CRON_SECRET }}")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Échec de la génération (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+          echo "✅ Article généré avec succès"
+
+      - name: Wait for Vercel rebuild
+        if: success()
+        run: |
+          echo "⏳ Vercel rebuild en cours (l'auto-commit Git déclenche un nouveau deploy)..."
+          sleep 30
+          echo "✅ Terminé"
