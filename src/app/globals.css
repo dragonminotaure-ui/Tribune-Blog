@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --accent: #dc2626;
+  --bg: #fafaf9;
+  --ink: #1c1917;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.font-display {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.font-sans-ui {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.prose-opinion {
+  max-width: 70ch;
+}
+.prose-opinion h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.8rem;
+  margin-bottom: 0.6rem;
+}
+.prose-opinion h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+.prose-opinion p {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  margin-bottom: 1.1rem;
+}
+.prose-opinion blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  font-style: italic;
+  color: #44403c;
+  margin: 1.4rem 0;
+}
+.prose-opinion ul, .prose-opinion ol {
+  margin-left: 1.4rem;
+  margin-bottom: 1.1rem;
+}
+.prose-opinion li { margin-bottom: 0.3rem; line-height: 1.6; }
+.prose-opinion a { color: var(--accent); text-decoration: underline; }
+.prose-opinion strong { font-weight: 700; }
